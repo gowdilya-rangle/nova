@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Itinerary } from './itinerary.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { identity } from 'rxjs';
+import { Address } from './itinerary.model';
 //Indicates the Service can be Injected as a Dependency...(injected into Itinerary Controller)
 @Injectable()
 export class ItineraryService {
@@ -12,17 +12,23 @@ export class ItineraryService {
     @InjectModel('Itinerary') private readonly itineraryModel: Model<Itinerary>,
   ) {}
   // can also add then after save(), instead of async await...
-  async insertItinerary(title: string, desc: string, cost: number) {
+  async insertItinerary(
+    title: string,
+    desc: string,
+    address: Address,
+    cost: number,
+  ) {
     const newItinerary = new this.itineraryModel({
       title,
       description: desc,
+      address: address,
       cost: cost,
     });
     const result = await newItinerary.save(); //save method from mongoose, since we wrapped our schema
     return result.id as string;
   }
 
-  async getItineraries() {
+  async getAllItineraries() {
     //mongoose model comes with find method
     // exec needed in the end to return a Real Promise
     const itineraries = await this.itineraryModel.find().exec();
@@ -31,6 +37,7 @@ export class ItineraryService {
       id: it.id,
       title: it.title,
       description: it.description,
+      address: it.address,
       cost: it.cost,
     }));
   }
@@ -42,6 +49,7 @@ export class ItineraryService {
       id: itinerary.id,
       title: itinerary.title,
       description: itinerary.description,
+      address: itinerary.address,
       cost: itinerary.cost,
     };
   }
@@ -51,6 +59,7 @@ export class ItineraryService {
     title: string,
     desc: string,
     cost: number,
+    address: Address,
   ) {
     const updatedItinerary = await this.findItinerary(itineraryId);
 
@@ -59,6 +68,9 @@ export class ItineraryService {
     }
     if (desc) {
       updatedItinerary.description = desc;
+    }
+    if (address) {
+      updatedItinerary.address = address;
     }
     if (cost) {
       updatedItinerary.cost = cost;
