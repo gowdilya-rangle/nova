@@ -3,10 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ItineraryModule } from './itinerary/itinerary.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CityModule } from './city/city.module';
 
 @Module({
   imports: [
     ItineraryModule,
+    CityModule,
     MongooseModule.forRoot(
       //to do replace with environment variables
       'mongodb+srv://Gow:CM.3aH$u94RrGz.@cluster0.almvx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
